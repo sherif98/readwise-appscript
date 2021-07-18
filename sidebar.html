@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
+    <!-- The CSS package above applies Google styling to buttons and other elements. -->
+    <style>
+    .width-100 {
+      width: 100%;
+    }
+    </style>
+  </head>
+  <body>
+    <div class="sidebar">
+      <form>
+        <div class="block form-group">
+          <label for="authkey"><b>Readwise Auth Key</b></label>
+          <input class="width-100" id="authkey"></input>
+        </div>
+        <div class="block">
+          <input type="checkbox" id="save-prefs">
+          <label for="save-prefs">Save this auth key for future requests</label>
+        </div>
+        <div class="block" id="button-bar">
+          <button class="blue" id="run-readwise">Readwise</button>
+        </div>
+      </form>
+    </div>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script>
+      $(function() {
+        $('#run-readwise').click(runReadwise);
+        google.script.run.withSuccessHandler(loadAuthKey)
+            .withFailureHandler(showError).getReadwiseAuthKey();
+      });
+
+      function loadAuthKey(authKey) {
+        $('#authkey').val(authKey);
+      }
+
+      function runReadwise() {
+        this.disabled = true;
+        $('#added-msg').remove();
+        var authKey = $('input[id=authkey]').val();
+        var savePrefs = $('#save-prefs').is(':checked');
+        google.script.run
+            .withSuccessHandler(
+              function(response, element) {
+                showMessage('Success!', $('#button-bar'), false);
+                element.disabled = false;
+              })
+            .withFailureHandler(
+              function(msg, element) {
+                showMessage(msg, $('#button-bar'), true);
+                element.disabled = false;
+              })
+            .withUserObject(this)
+            .sendSelectedTextToReadwise(authKey, savePrefs);
+      }
+
+      function showMessage(msg, element, isError) {
+        var div;
+        if (isError) {
+         div = $('<div id="msg" class="error added-msg">' + msg + '</div>');
+        } else {
+         div = $('<div id="msg" style="color:green;" class="added-msg">' + msg + '</div>');
+        }
+        $(element).after(div);
+      }
+    </script>
+  </body>
+</html>
