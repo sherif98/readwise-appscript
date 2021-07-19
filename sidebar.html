@@ -41,13 +41,13 @@
 
       function runReadwise() {
         this.disabled = true;
-        $('#added-msg').remove();
+        $('#msg').remove();
         var authKey = $('input[id=authkey]').val();
         var savePrefs = $('#save-prefs').is(':checked');
         google.script.run
             .withSuccessHandler(
               function(response, element) {
-                showMessage('Success!', $('#button-bar'), false);
+                showMessage(response[0].highlights_url, $('#button-bar'), false);
                 element.disabled = false;
               })
             .withFailureHandler(
@@ -62,9 +62,9 @@
       function showMessage(msg, element, isError) {
         var div;
         if (isError) {
-         div = $('<div id="msg" class="error added-msg">' + msg + '</div>');
+         div = $('<div id="msg" class="error">' + msg + '</div>');
         } else {
-         div = $('<div id="msg" style="color:green;" class="added-msg">' + msg + '</div>');
+         div = $('<div id="msg" style="color:green;">' + msg + '</div>');
         }
         $(element).after(div);
       }

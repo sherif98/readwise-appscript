@@ -61,7 +61,7 @@ function sendSelectedTextToReadwise(authKey, saveAuthKey) {
         .setProperty('READWISE_AUTH_KEY', authKey);
   }
   var text = getSelectedText().join('\n');
-  return readwise(text, authKey);
+  return JSON.parse(readwise(text, authKey));
 }
 
 /**
